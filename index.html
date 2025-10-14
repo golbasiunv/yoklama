@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dershane Yoklama Sistemi</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Gölbaşı Üniversite Yurdu</h1>
+            <div class="theme-switcher">
+                <span class="theme-label sun">☀️</span>
+                <label class="switch">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider round"></span>
+                </label>
+                <span class="theme-label moon">🌙</span>
+            </div>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn" onclick="showTab('students')">Öğrenci Yönetimi</button>
+            <button class="tab-btn active" onclick="showTab('attendance')">Yoklama Al</button>
+            <button class="tab-btn" onclick="showTab('history')">Geçmiş</button>
+            <button class="tab-btn" onclick="showTab('statistics')">İstatistikler</button>
+            <button class="tab-btn" onclick="showTab('settings')">Ayarlar</button>
+        </nav>
+
+        <!-- Öğrenci Yönetimi Sekmesi -->
+        <div id="students-tab" class="tab-content">
+            <div class="card">
+                <h2>Öğrenci Ekle</h2>
+                <div class="input-group">
+                    <input type="text" id="student-name" placeholder="Öğrenci adı ve soyadı">
+                    <button onclick="addStudent()" class="btn btn-primary">Ekle</button>
+                </div>
+                
+                <div class="multi-add-section">
+                    <h3>Çoklu Öğrenci Ekle</h3>
+                    <p class="info-text">Her satıra bir öğrenci adı yazın veya virgülle ayırın</p>
+                    <textarea id="multiple-students" placeholder="Talha Eken, Zühtü Hilmi Düzgüner, Ahmed Batın Akpınar&#10;veya&#10;Talha Eken&#10;Zühtü Hilmi Düzgüner&#10;Ahmed Batın Akpınar" rows="5"></textarea>
+                    <button onclick="addMultipleStudents()" class="btn btn-success">Çoklu Ekle</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Öğrenci Listesi</h2>
+                <div id="student-list" class="student-list"></div>
+            </div>
+        </div>
+
+        <!-- Yoklama Alma Sekmesi -->
+        <div id="attendance-tab" class="tab-content active">
+            <div class="card">
+                <div class="attendance-header">
+                    <h2>Yoklama Al</h2>
+                    <div class="date-display" id="current-date"></div>
+                </div>
+                
+                <div class="vakit-selector">
+                    <label for="vakit-select">Vakit Seçin:</label>
+                    <select id="vakit-select" class="vakit-select">
+                        <option value="sabah">Sabah Namazı</option>
+                        <option value="ogle">Öğle Namazı</option>
+                        <option value="ikindi">İkindi Namazı</option>
+                        <option value="aksam">Akşam Namazı</option>
+                        <option value="yatsi">Yatsı Namazı</option>
+                        <option value="ozel">Özel</option>
+                    </select>
+                </div>
+
+                <div id="attendance-list" class="attendance-list"></div>
+                <button onclick="submitAttendance()" class="btn btn-success btn-large">Yoklama Sonuçlarını Gör</button>
+            </div>
+        </div>
+
+        <!-- Geçmiş Sekmesi -->
+        <div id="history-tab" class="tab-content">
+            <div class="card">
+                <h2>Yoklama Geçmişi</h2>
+                <div id="history-list" class="history-list"></div>
+            </div>
+        </div>
+
+        <!-- İstatistikler Sekmesi -->
+        <div id="statistics-tab" class="tab-content">
+            <div class="card">
+                <h2>Aylık Yoklama İstatistikleri</h2>
+                
+                <div class="stats-filters">
+                    <div class="form-group">
+                        <label for="month-select">Ay Seçin:</label>
+                        <select id="month-select" class="month-select" onchange="loadStatistics()">
+                            <option value="all">Tüm Zamanlar</option>
+                        </select>
+                    </div>
+                    <button onclick="exportToExcel()" class="btn btn-success">Excel'e Aktar</button>
+                </div>
+
+                <div id="statistics-table-container" class="statistics-table-container"></div>
+            </div>
+        </div>
+
+        <!-- Ayarlar Sekmesi -->
+        <div id="settings-tab" class="tab-content">
+            <div class="card">
+                <h2>WhatsApp Hakkında</h2>
+                <p class="info-text">Yoklama sonuçlarını "WhatsApp'a Gönder" butonuna tıklayarak WhatsApp uygulamanıza gönderebilirsiniz. WhatsApp açıldığında istediğiniz kişi veya grubu kendiniz seçebilirsiniz.</p>
+            </div>
+
+            <div class="card">
+                <h2>Arşivlenmiş Öğrenciler</h2>
+                <p class="info-text">Silinen öğrenciler arşivlenir ve yoklama kayıtları korunur. Aynı isimle tekrar eklerseniz tüm verileri geri gelir.</p>
+                <div id="archived-list" class="archived-list"></div>
+                <button onclick="loadArchivedList()" class="btn btn-secondary">Arşivi Görüntüle</button>
+            </div>
+
+            <div class="card">
+                <h2>Veri Yönetimi</h2>
+                <button onclick="checkPasswordAndExecute('export')" class="btn btn-secondary">📤 Verileri Dışa Aktar</button>
+                <button onclick="checkPasswordAndExecute('import')" class="btn btn-primary">📥 Verileri İçe Aktar</button>
+                <button onclick="checkPasswordAndExecute('delete')" class="btn btn-danger">🗑️ Tüm Verileri Sil</button>
+                <input type="file" id="import-file" accept=".json" style="display: none;" onchange="importData(event)">
+            </div>
+        </div>
+
+        <!-- Sonuç Modal -->
+        <div id="result-modal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h2>Yoklama Sonuçları</h2>
+                <div id="result-date" class="result-date"></div>
+                
+                <div class="result-section">
+                    <h3>📊 Özet</h3>
+                    <div id="summary" class="summary"></div>
+                </div>
+
+                <div class="result-section">
+                    <h3>❌ Gelmeyenler</h3>
+                    <div id="absent-list" class="result-list"></div>
+                </div>
+
+                <div class="result-section">
+                    <h3>🏥 İzinliler</h3>
+                    <div id="excused-list" class="result-list"></div>
+                </div>
+
+                <div class="modal-actions">
+                    <button onclick="sendToWhatsApp()" class="btn btn-whatsapp">WhatsApp'a Gönder</button>
+                    <button onclick="closeModal()" class="btn btn-secondary">Kapat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- İçe Aktarma Onay Modal -->
+    <div id="import-confirm-modal" class="modal">
+        <div class="modal-content confirm-modal">
+            <h2>⚠️ Dikkat!</h2>
+            <p class="confirm-text">Veri içe aktarma işlemi <strong>mevcut verilerinizin üzerine yazacak</strong>!</p>
+            <p class="confirm-subtext">Devam etmeden önce mevcut verilerinizi dışa aktarmanız önerilir.</p>
+            <div class="modal-actions">
+                <button onclick="closeImportConfirmModal()" class="btn btn-secondary">İptal</button>
+                <button onclick="confirmImport()" class="btn btn-primary">Devam Et</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tüm Verileri Sil Onay Modal -->
+    <div id="delete-confirm-modal" class="modal">
+        <div class="modal-content confirm-modal danger-modal">
+            <h2>🗑️ Tüm Verileri Sil</h2>
+            <p class="confirm-text"><strong>TÜM VERİLER KALİCİ OLARAK SİLİNECEK!</strong></p>
+            <p class="confirm-subtext">Bu işlem geri alınamaz. Emin misiniz?</p>
+            <div class="modal-actions">
+                <button onclick="closeDeleteConfirmModal()" class="btn btn-secondary">İptal</button>
+                <button onclick="confirmDeleteAll()" class="btn btn-danger">Evet, Tümünü Sil</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dışa Aktarma Başarılı Modal -->
+    <div id="export-success-modal" class="modal">
+        <div class="modal-content success-modal">
+            <h2>✅ Başarılı!</h2>
+            <p class="confirm-text">Verileriniz başarıyla dışa aktarıldı.</p>
+            <p class="confirm-subtext" id="export-filename"></p>
+            <div class="modal-actions">
+                <button onclick="closeExportSuccessModal()" class="btn btn-success">Tamam</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
