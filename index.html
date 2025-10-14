@@ -161,12 +161,29 @@
     <!-- İçe Aktarma Onay Modal -->
     <div id="import-confirm-modal" class="modal">
         <div class="modal-content confirm-modal">
-            <h2>⚠️ Dikkat!</h2>
-            <p class="confirm-text">Veri içe aktarma işlemi <strong>mevcut verilerinizin üzerine yazacak</strong>!</p>
-            <p class="confirm-subtext">Devam etmeden önce mevcut verilerinizi dışa aktarmanız önerilir.</p>
+            <h2>📥 Veri İçe Aktarma</h2>
+            <p class="confirm-text">Verileri nasıl içe aktarmak istersiniz?</p>
+            
+            <div style="margin: 20px 0; text-align: left;">
+                <div style="margin-bottom: 15px; padding: 15px; background: #e3f2fd; border-radius: 8px;">
+                    <strong>🔄 Birleştir (Önerilen)</strong>
+                    <p style="margin: 5px 0 0 0; font-size: 14px; color: #666;">
+                        Mevcut verileriniz korunur ve yeni veriler eklenir. Aynı öğrenciler ve yoklamalar birleştirilir.
+                    </p>
+                </div>
+                
+                <div style="padding: 15px; background: #fff3cd; border-radius: 8px;">
+                    <strong>⚠️ Üzerine Yaz</strong>
+                    <p style="margin: 5px 0 0 0; font-size: 14px; color: #666;">
+                        Mevcut tüm verileriniz silinir ve dosyadaki veriler yüklenir. Bu işlem geri alınamaz!
+                    </p>
+                </div>
+            </div>
+            
             <div class="modal-actions">
                 <button onclick="closeImportConfirmModal()" class="btn btn-secondary">İptal</button>
-                <button onclick="confirmImport()" class="btn btn-primary">Devam Et</button>
+                <button onclick="confirmImport('merge')" class="btn btn-success">🔄 Birleştir</button>
+                <button onclick="confirmImport('overwrite')" class="btn btn-danger">⚠️ Üzerine Yaz</button>
             </div>
         </div>
     </div>

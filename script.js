@@ -649,12 +649,14 @@ function closeImportConfirmModal() {
 }
 
 // İçe aktarmayı onayla
-function confirmImport() {
+function confirmImport(mode) {
+    // mode: 'merge' (birleştir) veya 'overwrite' (üzerine yaz)
+    window.importMode = mode || 'merge'; // Varsayılan: birleştir
     closeImportConfirmModal();
     document.getElementById('import-file').click();
 }
 
-// Veri içe aktar
+// Veri içe aktar (Birleştirme veya Üzerine Yazma)
 function importData(event) {
     const file = event.target.files[0];
     
@@ -667,6 +669,7 @@ function importData(event) {
         return;
     }
     
+    const mode = window.importMode || 'merge'; // Varsayılan: birleştir
     const reader = new FileReader();
     
     reader.onload = function(e) {
@@ -679,28 +682,107 @@ function importData(event) {
             }
             
             let importMessage = '';
+            let addedCount = 0;
+            let mergedCount = 0;
+            let historyCount = 0;
+            let archivedCount = 0;
             
-            // Öğrencileri içe aktar
-            if (data.students.length > 0) {
-                saveStudents(data.students);
-                importMessage += `✅ ${data.students.length} öğrenci içe aktarıldı.\n`;
-            }
-            
-            // Geçmiş varsa içe aktar
-            if (data.history && Array.isArray(data.history) && data.history.length > 0) {
-                localStorage.setItem(STORAGE_KEYS.ATTENDANCE_HISTORY, JSON.stringify(data.history));
-                importMessage += `✅ ${data.history.length} yoklama kaydı içe aktarıldı.\n`;
-            }
-            
-            // Arşiv varsa içe aktar
-            if (data.archived && Array.isArray(data.archived) && data.archived.length > 0) {
-                saveArchivedStudents(data.archived);
-                importMessage += `✅ ${data.archived.length} arşivlenmiş öğrenci içe aktarıldı.\n`;
+            if (mode === 'overwrite') {
+                // ÜZERINE YAZMA MODU - Tüm verileri sil ve yenilerini yükle
+                
+                // Öğrencileri içe aktar (üzerine yaz)
+                if (data.students.length > 0) {
+                    saveStudents(data.students);
+                    importMessage += `✅ ${data.students.length} öğrenci içe aktarıldı (üzerine yazıldı).\n`;
+                }
+                
+                // Geçmiş varsa içe aktar (üzerine yaz)
+                if (data.history && Array.isArray(data.history) && data.history.length > 0) {
+                    localStorage.setItem(STORAGE_KEYS.ATTENDANCE_HISTORY, JSON.stringify(data.history));
+                    importMessage += `✅ ${data.history.length} yoklama kaydı içe aktarıldı (üzerine yazıldı).\n`;
+                }
+                
+                // Arşiv varsa içe aktar (üzerine yaz)
+                if (data.archived && Array.isArray(data.archived) && data.archived.length > 0) {
+                    saveArchivedStudents(data.archived);
+                    importMessage += `✅ ${data.archived.length} arşivlenmiş öğrenci içe aktarıldı (üzerine yazıldı).\n`;
+                }
+                
+            } else {
+                // BİRLEŞTİRME MODU - Mevcut verilerle yeni verileri birleştir
+                
+                // Öğrencileri birleştir
+                const currentStudents = getStudents();
+                const currentStudentIds = new Set(currentStudents.map(s => s.id));
+                const currentStudentNames = new Set(currentStudents.map(s => s.name.toLowerCase()));
+                
+                data.students.forEach(student => {
+                    // Aynı ID veya aynı isim (case-insensitive) varsa ekleme
+                    if (!currentStudentIds.has(student.id) && !currentStudentNames.has(student.name.toLowerCase())) {
+                        currentStudents.push(student);
+                        addedCount++;
+                    } else {
+                        mergedCount++;
+                    }
+                });
+                
+                saveStudents(currentStudents);
+                
+                // Yoklama geçmişini birleştir
+                if (data.history && Array.isArray(data.history) && data.history.length > 0) {
+                    const currentHistory = getAttendanceHistory();
+                    
+                    // Tarih ve vakit bazlı benzersiz yoklamalar için set oluştur
+                    const existingRecords = new Set(
+                        currentHistory.map(record => `${record.date}-${record.vakit}`)
+                    );
+                    
+                    data.history.forEach(record => {
+                        const recordKey = `${record.date}-${record.vakit}`;
+                        if (!existingRecords.has(recordKey)) {
+                            currentHistory.push(record);
+                            historyCount++;
+                        }
+                    });
+                    
+                    localStorage.setItem(STORAGE_KEYS.ATTENDANCE_HISTORY, JSON.stringify(currentHistory));
+                }
+                
+                // Arşivi birleştir
+                if (data.archived && Array.isArray(data.archived) && data.archived.length > 0) {
+                    const currentArchived = getArchivedStudents();
+                    const currentArchivedIds = new Set(currentArchived.map(s => s.id));
+                    
+                    data.archived.forEach(student => {
+                        if (!currentArchivedIds.has(student.id)) {
+                            currentArchived.push(student);
+                            archivedCount++;
+                        }
+                    });
+                    
+                    saveArchivedStudents(currentArchived);
+                }
+                
+                // Birleştirme sonuç mesajı
+                if (addedCount > 0) {
+                    importMessage += `✅ ${addedCount} yeni öğrenci eklendi.\n`;
+                }
+                if (mergedCount > 0) {
+                    importMessage += `ℹ️ ${mergedCount} öğrenci zaten mevcut (atlandı).\n`;
+                }
+                if (historyCount > 0) {
+                    importMessage += `✅ ${historyCount} yeni yoklama kaydı eklendi.\n`;
+                }
+                if (archivedCount > 0) {
+                    importMessage += `✅ ${archivedCount} arşiv kaydı eklendi.\n`;
+                }
             }
             
             // Başarı mesajını göster
             if (importMessage) {
-                alert(importMessage);
+                alert(`🎉 İçe Aktarma Tamamlandı!\n\n${importMessage}`);
+            } else {
+                alert('ℹ️ Hiçbir yeni veri eklenmedi (tüm veriler zaten mevcut).');
             }
             
             // Listeleri yenile
@@ -717,6 +799,9 @@ function importData(event) {
     
     // Input'u temizle
     event.target.value = '';
+    
+    // Import mode'u sıfırla
+    window.importMode = null;
 }
 
 // Geçmiş yoklamaları yükleme
