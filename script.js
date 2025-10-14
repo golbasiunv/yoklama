@@ -563,9 +563,24 @@ function sendToWhatsApp() {
 }
 
 
-// Şifre kontrol fonksiyonu
-function checkPasswordAndExecute(action) {
-    const correctPassword = '9921';
+// SHA-256 hash fonksiyonu
+// Girilen şifreyi güvenli bir şekilde hash'ler
+// Web Crypto API kullanarak tarayıcıda çalışır
+async function hashPassword(password) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashHex;
+}
+
+// Şifre kontrol fonksiyonu (SHA-256 Hash ile)
+// Güvenlik: Şifre düz metin olarak saklanmaz, sadece hash karşılaştırması yapılır
+async function checkPasswordAndExecute(action) {
+    // Şifre değiştirmek için: python -c "import hashlib; print(hashlib.sha256('YENİ_ŞİFRE'.encode()).hexdigest())"
+    const correctPasswordHash = 'a896653291d864fbafc95dbe32b23b301994906cc054c4a07f38f1f8bdfacf0f';
+    
     const password = prompt('🔒 Veri yönetimi işlemleri için şifre gerekmektedir.\n\nLütfen şifreyi girin:');
     
     if (password === null) {
@@ -573,7 +588,10 @@ function checkPasswordAndExecute(action) {
         return;
     }
     
-    if (password === correctPassword) {
+    // Girilen şifreyi hash'le ve karşılaştır
+    const enteredPasswordHash = await hashPassword(password);
+    
+    if (enteredPasswordHash === correctPasswordHash) {
         // Şifre doğru, işlemi gerçekleştir
         switch(action) {
             case 'export':

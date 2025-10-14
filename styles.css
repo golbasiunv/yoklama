@@ -4,12 +4,22 @@
     box-sizing: border-box;
 }
 
+html {
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    overflow-x: hidden;
+    width: 100%;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     padding: 20px;
     transition: all 0.3s ease;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    overflow-x: hidden;
 }
 
 /* Karanlık Tema */
@@ -1351,8 +1361,15 @@ body.dark-theme .success-modal .confirm-text {
 }
 
 @media (max-width: 768px) {
+    body {
+        padding: 0;
+    }
+
     .container {
         border-radius: 0;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
     }
 
     header {
@@ -1371,9 +1388,17 @@ body.dark-theme .success-modal .confirm-text {
         text-align: center;
     }
 
+    .tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+    }
+
     .tab-btn {
-        font-size: 14px;
-        padding: 12px 10px;
+        font-size: 13px;
+        padding: 12px 8px;
+        flex: 1 1 auto;
+        min-width: fit-content;
     }
 
     .tab-content {
@@ -1395,15 +1420,26 @@ body.dark-theme .success-modal .confirm-text {
     }
 
     .modal-content {
-        padding: 25px;
+        padding: 20px;
+        width: 95%;
+        max-width: 95%;
+        margin: 20px auto;
+        max-height: 90vh;
+        overflow-y: auto;
     }
 
     .summary {
         grid-template-columns: 1fr;
+        gap: 10px;
     }
 
     .modal-actions {
         flex-direction: column;
+        gap: 10px;
+    }
+    
+    .modal-actions .btn {
+        width: 100%;
     }
     
     .stats-filters {
@@ -1416,12 +1452,31 @@ body.dark-theme .success-modal .confirm-text {
     }
     
     .stats-table {
-        font-size: 13px;
+        font-size: 12px;
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
     }
     
     .stats-table th,
     .stats-table td {
-        padding: 10px 8px;
+        padding: 8px 5px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+    
+    .stats-table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+    }
+    
+    input[type="text"],
+    textarea,
+    select {
+        font-size: 16px !important; /* iOS zoom önleme */
+        max-width: 100%;
     }
     
     .archived-item {
