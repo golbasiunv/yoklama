@@ -11,7 +11,13 @@
 <body>
     <div class="container">
         <header>
-            <h1>📚 Gölbaşı Üniversite Yurdu</h1>
+            <div class="brand">
+                <span class="brand-mark" aria-hidden="true">GY</span>
+                <div>
+                    <p class="eyebrow">YURT YÖNETİMİ</p>
+                    <h1>Gölbaşı Üniversite Yurdu</h1>
+                </div>
+            </div>
             <div class="theme-switcher">
                 <span class="theme-label sun">☀️</span>
                 <label class="switch">
@@ -22,12 +28,12 @@
             </div>
         </header>
 
-        <nav class="tabs">
-            <button class="tab-btn" onclick="showTab('students')">Öğrenci Yönetimi</button>
-            <button class="tab-btn active" onclick="showTab('attendance')">Yoklama Al</button>
-            <button class="tab-btn" onclick="showTab('history')">Geçmiş</button>
-            <button class="tab-btn" onclick="showTab('statistics')">İstatistikler</button>
-            <button class="tab-btn" onclick="showTab('settings')">Ayarlar</button>
+        <nav class="tabs" aria-label="Ana menü">
+            <button class="tab-btn" onclick="showTab('students')"><span>Öğrenciler</span></button>
+            <button class="tab-btn active" onclick="showTab('attendance')"><span>Yoklama</span></button>
+            <button class="tab-btn" onclick="showTab('history')"><span>Geçmiş</span></button>
+            <button class="tab-btn" onclick="showTab('statistics')"><span>İstatistikler</span></button>
+            <button class="tab-btn" onclick="showTab('settings')"><span>Ayarlar</span></button>
         </nav>
 
         <!-- Öğrenci Yönetimi Sekmesi -->
