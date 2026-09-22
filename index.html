@@ -2,11 +2,16 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Dershane Yoklama Sistemi</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#f6f5f1">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icons/app-icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <title>Gölbaşı Yoklama</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -20,20 +25,20 @@
             </div>
             <div class="theme-switcher">
                 <span class="theme-label sun">☀️</span>
-                <label class="switch">
-                    <input type="checkbox" id="theme-toggle">
-                    <span class="slider round"></span>
+                <label class="switch" title="Görünümü değiştir">
+                    <input type="checkbox" id="theme-toggle" aria-label="Koyu temayı aç veya kapat">
+                    <span class="slider round" aria-hidden="true"></span>
                 </label>
                 <span class="theme-label moon">🌙</span>
             </div>
         </header>
 
         <nav class="tabs" aria-label="Ana menü">
-            <button class="tab-btn" onclick="showTab('students')"><span>Öğrenciler</span></button>
-            <button class="tab-btn active" onclick="showTab('attendance')"><span>Yoklama</span></button>
-            <button class="tab-btn" onclick="showTab('history')"><span>Geçmiş</span></button>
-            <button class="tab-btn" onclick="showTab('statistics')"><span>İstatistikler</span></button>
-            <button class="tab-btn" onclick="showTab('settings')"><span>Ayarlar</span></button>
+            <button class="tab-btn" onclick="showTab('students', this)"><span>Öğrenciler</span></button>
+            <button class="tab-btn active" onclick="showTab('attendance', this)"><span>Yoklama</span></button>
+            <button class="tab-btn" onclick="showTab('history', this)"><span>Geçmiş</span></button>
+            <button class="tab-btn" onclick="showTab('statistics', this)"><span>İstatistikler</span></button>
+            <button class="tab-btn" onclick="showTab('settings', this)"><span>Ayarlar</span></button>
         </nav>
 
         <!-- Öğrenci Yönetimi Sekmesi -->
@@ -114,6 +119,12 @@
         <!-- Ayarlar Sekmesi -->
         <div id="settings-tab" class="tab-content">
             <div class="card">
+                <h2>Telefona Kur</h2>
+                <p class="info-text">Yoklama uygulamasını telefonunun ana ekranına ekleyebilirsin. Kurulduktan sonra önceden açılmış sayfalar çevrimdışı da çalışır; veriler bu cihazda saklanır.</p>
+                <button id="install-app" class="btn btn-primary" hidden>Uygulamayı Kur</button>
+                <p class="info-text" id="install-help">iPhone’da Safari paylaşım menüsünden “Ana Ekrana Ekle” seçeneğini kullanabilirsin. Diğer tarayıcılarda menüde “Uygulamayı yükle” görünebilir.</p>
+            </div>
+            <div class="card">
                 <h2>WhatsApp Hakkında</h2>
                 <p class="info-text">Yoklama sonuçlarını "WhatsApp'a Gönder" butonuna tıklayarak WhatsApp uygulamanıza gönderebilirsiniz. WhatsApp açıldığında istediğiniz kişi veya grubu kendiniz seçebilirsiniz.</p>
             </div>
@@ -170,17 +181,17 @@
             <h2>📥 Veri İçe Aktarma</h2>
             <p class="confirm-text">Verileri nasıl içe aktarmak istersiniz?</p>
             
-            <div style="margin: 20px 0; text-align: left;">
-                <div style="margin-bottom: 15px; padding: 15px; background: #e3f2fd; border-radius: 8px;">
+            <div class="import-choices">
+                <div class="import-choice">
                     <strong>🔄 Birleştir (Önerilen)</strong>
-                    <p style="margin: 5px 0 0 0; font-size: 14px; color: #666;">
+                    <p>
                         Mevcut verileriniz korunur ve yeni veriler eklenir. Aynı öğrenciler ve yoklamalar birleştirilir.
                     </p>
                 </div>
                 
-                <div style="padding: 15px; background: #fff3cd; border-radius: 8px;">
+                <div class="import-choice">
                     <strong>⚠️ Üzerine Yaz</strong>
-                    <p style="margin: 5px 0 0 0; font-size: 14px; color: #666;">
+                    <p>
                         Mevcut tüm verileriniz silinir ve dosyadaki veriler yüklenir. Bu işlem geri alınamaz!
                     </p>
                 </div>

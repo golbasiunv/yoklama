@@ -1,11 +1,13 @@
 {
   "name": "Gölbaşı Yoklama Sistemi",
   "short_name": "Yoklama",
-  "description": "Dershane öğrenci yoklama takip sistemi",
-  "start_url": "/",
+  "description": "Gölbaşı Üniversite Yurdu yoklama takibi",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#667eea",
-  "theme_color": "#667eea",
+  "background_color": "#f6f5f1",
+  "theme_color": "#f6f5f1",
   "orientation": "portrait",
   "icons": [
     {

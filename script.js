@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateCurrentDate();
     loadTheme(); // Kaydedilmiş temayı yükle
     setupThemeToggle(); // Tema değiştirici kurulum
+    setupPwa();
     
     // Modal dışına tıklayınca kapatma
     window.addEventListener('click', function(event) {
@@ -47,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Sekme değiştirme
-function showTab(tabName) {
+function showTab(tabName, button) {
     // Tüm sekmeleri gizle
     const tabs = document.querySelectorAll('.tab-content');
     tabs.forEach(tab => tab.classList.remove('active'));
@@ -58,7 +59,8 @@ function showTab(tabName) {
 
     // Seçili sekmeyi göster
     document.getElementById(`${tabName}-tab`).classList.add('active');
-    event.target.classList.add('active');
+    const activeButton = button || document.querySelector(`.tab-btn[onclick^="showTab('${tabName}'"]`);
+    if (activeButton) activeButton.classList.add('active');
 
     // Yoklama sekmesine geçildiğinde listeyi güncelle
     if (tabName === 'attendance') {
@@ -285,9 +287,9 @@ function loadAttendanceList() {
             <div class="attendance-item">
                 <span class="attendance-name">${student.name}</span>
                 <div class="attendance-options">
-                    <button class="attendance-btn ${savedStatus === 'present' ? 'selected-present' : ''}" data-id="${student.id}" data-status="present" onclick="selectAttendance(${student.id}, 'present')">Var</button>
-                    <button class="attendance-btn ${savedStatus === 'absent' ? 'selected-absent' : ''}" data-id="${student.id}" data-status="absent" onclick="selectAttendance(${student.id}, 'absent')">Yok</button>
-                    <button class="attendance-btn ${savedStatus === 'excused' ? 'selected-excused' : ''}" data-id="${student.id}" data-status="excused" onclick="selectAttendance(${student.id}, 'excused')">İzinli</button>
+                    <button class="attendance-btn ${savedStatus === 'present' ? 'selected-present' : ''}" aria-pressed="${savedStatus === 'present'}" data-id="${student.id}" data-status="present" onclick="selectAttendance(${student.id}, 'present')">Var</button>
+                    <button class="attendance-btn ${savedStatus === 'absent' ? 'selected-absent' : ''}" aria-pressed="${savedStatus === 'absent'}" data-id="${student.id}" data-status="absent" onclick="selectAttendance(${student.id}, 'absent')">Yok</button>
+                    <button class="attendance-btn ${savedStatus === 'excused' ? 'selected-excused' : ''}" aria-pressed="${savedStatus === 'excused'}" data-id="${student.id}" data-status="excused" onclick="selectAttendance(${student.id}, 'excused')">İzinli</button>
                 </div>
             </div>
         `;
@@ -302,11 +304,13 @@ function selectAttendance(studentId, status) {
     // Tüm butonlardan seçimi kaldır
     buttons.forEach(btn => {
         btn.classList.remove('selected-present', 'selected-absent', 'selected-excused');
+        btn.setAttribute('aria-pressed', 'false');
     });
 
     // Seçilen butona style ekle
     const selectedButton = document.querySelector(`[data-id="${studentId}"][data-status="${status}"]`);
     selectedButton.classList.add(`selected-${status}`);
+    selectedButton.setAttribute('aria-pressed', 'true');
     
     // Seçimleri kaydet
     saveCurrentSelections();
@@ -461,15 +465,15 @@ function showResults(attendance, vakit) {
         </div>
         <div class="summary-item">
             <span class="summary-label">Var</span>
-            <span class="summary-value" style="color: #51cf66;">${present}</span>
+            <span class="summary-value summary-present">${present}</span>
         </div>
         <div class="summary-item">
             <span class="summary-label">Yok</span>
-            <span class="summary-value" style="color: #ff6b6b;">${absent}</span>
+            <span class="summary-value summary-absent">${absent}</span>
         </div>
         <div class="summary-item">
             <span class="summary-label">İzinli</span>
-            <span class="summary-value" style="color: #ffa94d;">${excused}</span>
+            <span class="summary-value summary-excused">${excused}</span>
         </div>
     `;
 
@@ -1496,6 +1500,7 @@ function loadTheme() {
     const isDark = savedTheme === 'dark';
     
     document.body.classList.toggle('dark-theme', isDark);
+    updateThemeColor(isDark);
     
     const themeToggle = document.getElementById('theme-toggle');
     if (themeToggle) {
@@ -1507,15 +1512,49 @@ function saveTheme(theme) {
     localStorage.setItem(STORAGE_KEYS.THEME, theme);
 }
 
+function updateThemeColor(isDark) {
+    document.querySelector('meta[name="theme-color"]').content = isDark ? '#1d2422' : '#f6f5f1';
+}
+
 function setupThemeToggle() {
     const themeToggle = document.getElementById('theme-toggle');
     if (themeToggle) {
         themeToggle.addEventListener('change', function() {
             const isDark = this.checked;
             document.body.classList.toggle('dark-theme', isDark);
+            updateThemeColor(isDark);
             saveTheme(isDark ? 'dark' : 'light');
         });
     }
+}
+
+function setupPwa() {
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./service-worker.js').catch(error => {
+                console.warn('Çevrimdışı destek etkinleştirilemedi:', error);
+            });
+        });
+    }
+
+    const installButton = document.getElementById('install-app');
+    let installPrompt;
+    window.addEventListener('beforeinstallprompt', event => {
+        event.preventDefault();
+        installPrompt = event;
+        installButton.hidden = false;
+    });
+    installButton.addEventListener('click', async () => {
+        if (!installPrompt) return;
+        installPrompt.prompt();
+        await installPrompt.userChoice;
+        installPrompt = null;
+        installButton.hidden = true;
+    });
+    window.addEventListener('appinstalled', () => {
+        installPrompt = null;
+        installButton.hidden = true;
+    });
 }
 
 // Enter tuşu ile öğrenci ekleme
