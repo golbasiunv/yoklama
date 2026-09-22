@@ -1,42 +1,42 @@
 :root {
     color-scheme: light;
-    --page: #f6f5f1;
-    --surface: #fffefa;
-    --surface-soft: #f2f0e9;
+    --page: #f3f6fa;
+    --surface: #ffffff;
+    --surface-soft: #eef2f7;
     --surface-raised: #ffffff;
-    --ink: #282f2b;
-    --muted: #65716a;
-    --line: #d9ddd5;
-    --accent: #456d60;
-    --accent-strong: #315648;
-    --accent-soft: #dcece3;
-    --present: #386e53;
-    --present-bg: #d8ebdd;
-    --absent: #a34f57;
-    --absent-bg: #f4dfe1;
-    --excused: #926b35;
-    --excused-bg: #f3e8d2;
-    --shadow: 0 12px 32px rgba(39, 48, 42, .055);
+    --ink: #18263c;
+    --muted: #627187;
+    --line: #dbe3ed;
+    --accent: #375b91;
+    --accent-strong: #203e6a;
+    --accent-soft: #e1eaf6;
+    --present: #286452;
+    --present-bg: #dceee8;
+    --absent: #985260;
+    --absent-bg: #f4e3e7;
+    --excused: #876636;
+    --excused-bg: #f4ecdb;
+    --shadow: 0 12px 32px rgba(25, 49, 85, .055);
 }
 
 body.dark-theme {
     color-scheme: dark;
-    --page: #1d2422;
-    --surface: #29322e;
-    --surface-soft: #333e38;
-    --surface-raised: #303a35;
-    --ink: #f1f3ed;
-    --muted: #b8c3b9;
-    --line: #48544c;
-    --accent: #a9cbbb;
-    --accent-strong: #c5ddcf;
-    --accent-soft: #3b5748;
-    --present: #c2e9cb;
-    --present-bg: #375d45;
+    --page: #111a2a;
+    --surface: #192438;
+    --surface-soft: #222f45;
+    --surface-raised: #1e2b40;
+    --ink: #eef3fa;
+    --muted: #b3c1d2;
+    --line: #38465e;
+    --accent: #a9c4e9;
+    --accent-strong: #d3e3f7;
+    --accent-soft: #2c4366;
+    --present: #c2e9d4;
+    --present-bg: #31584d;
     --absent: #f0b7bd;
-    --absent-bg: #674149;
+    --absent-bg: #634454;
     --excused: #f1d4a2;
-    --excused-bg: #665640;
+    --excused-bg: #62543f;
     --shadow: 0 12px 32px rgba(0, 0, 0, .16);
 }
 
@@ -65,7 +65,8 @@ header h1 { margin: 0; color: var(--ink); font-size: clamp(17px, 2.4vw, 22px); f
 .switch input:focus-visible + .slider { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 12px; }
 
 .tabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; padding: 6px 10px; background: var(--surface); border: 1px solid var(--line); border-top: 0; }
-.tab-btn { min-width: 0; min-height: 44px; padding: 9px 6px; border: 0; border-radius: 10px; background: transparent; color: var(--muted); font-size: 13px; font-weight: 650; line-height: 1.15; text-align: center; }
+.tab-btn { display: flex; align-items: center; justify-content: center; gap: 7px; min-width: 0; min-height: 44px; padding: 9px 6px; border: 0; border-radius: 10px; background: transparent; color: var(--muted); font-size: 13px; font-weight: 650; line-height: 1.15; text-align: center; }
+.tab-icon { flex: 0 0 18px; width: 18px; height: 18px; }
 .tab-btn:hover { background: var(--surface-soft); color: var(--ink); }
 .tab-btn.active { background: var(--accent-soft); color: var(--accent-strong); }
 .tab-content { display: none; min-height: 450px; padding: 24px; border: 1px solid var(--line); border-top: 0; border-radius: 0 0 20px 20px; background: var(--surface-soft); }
@@ -176,7 +177,7 @@ textarea { display: block; min-height: 110px; resize: vertical; }
 #install-app[hidden] { display: none; }
 
 @media (max-width: 700px) {
-    body { padding-bottom: env(safe-area-inset-bottom); }
+    body { padding-bottom: calc(65px + env(safe-area-inset-bottom)); }
     .container { width: 100%; min-height: 100dvh; margin: 0; }
     header { min-height: 76px; padding: max(14px, env(safe-area-inset-top)) 17px 14px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; }
     .brand { gap: 10px; }
@@ -184,9 +185,10 @@ textarea { display: block; min-height: 110px; resize: vertical; }
     header h1 { max-width: 230px; font-size: 16px; }
     .eyebrow { font-size: 9px; }
     .theme-switcher { width: 36px; height: 36px; border-radius: 10px; }
-    .tabs { position: sticky; top: 0; z-index: 5; gap: 2px; padding: 6px 5px; border: 0; border-bottom: 1px solid var(--line); }
-    .tab-btn { min-height: 46px; padding: 5px 2px; font-size: clamp(10px, 2.6vw, 12px); overflow-wrap: anywhere; }
-    .tab-content { min-height: calc(100dvh - 129px); padding: 14px; border: 0; border-radius: 0; }
+    .tabs { position: fixed; inset: auto 0 0; z-index: 10; gap: 2px; padding: 5px 5px calc(5px + env(safe-area-inset-bottom)); border: 0; border-top: 1px solid var(--line); box-shadow: 0 -8px 24px rgba(20, 38, 67, .08); }
+    .tab-btn { flex-direction: column; gap: 2px; min-height: 54px; padding: 5px 2px; font-size: clamp(10px, 2.6vw, 12px); overflow-wrap: anywhere; }
+    .tab-icon { flex-basis: 19px; width: 19px; height: 19px; }
+    .tab-content { min-height: calc(100dvh - 76px); padding: 14px; border: 0; border-radius: 0; }
     .card { padding: 17px; border-radius: 14px; }
     .card h2 { font-size: 18px; }
     .attendance-header { flex-direction: column; align-items: flex-start; }

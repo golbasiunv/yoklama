@@ -6,12 +6,12 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="theme-color" content="#f6f5f1">
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="icons/app-icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <meta name="theme-color" content="#f3f6fa">
+    <link rel="manifest" href="manifest.json?v=4">
+    <link rel="icon" href="icons/app-icon.svg?v=4" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png?v=4">
     <title>Gölbaşı Yoklama</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
     <div class="container">
@@ -34,11 +34,11 @@
         </header>
 
         <nav class="tabs" aria-label="Ana menü">
-            <button class="tab-btn" onclick="showTab('students', this)"><span>Öğrenciler</span></button>
-            <button class="tab-btn active" onclick="showTab('attendance', this)"><span>Yoklama</span></button>
-            <button class="tab-btn" onclick="showTab('history', this)"><span>Geçmiş</span></button>
-            <button class="tab-btn" onclick="showTab('statistics', this)"><span>İstatistikler</span></button>
-            <button class="tab-btn" onclick="showTab('settings', this)"><span>Ayarlar</span></button>
+            <button class="tab-btn" onclick="showTab('students', this)"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M5.5 20v-2a6.5 6.5 0 0 1 13 0v2"/></svg><span>Öğrenciler</span></button>
+            <button class="tab-btn active" onclick="showTab('attendance', this)"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="m8 12 3 3 5-6"/></svg><span>Yoklama</span></button>
+            <button class="tab-btn" onclick="showTab('history', this)"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg><span>Geçmiş</span></button>
+            <button class="tab-btn" onclick="showTab('statistics', this)"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 20v-7M10 20V7M15 20v-9M20 20V4"/></svg><span>İstatistikler</span></button>
+            <button class="tab-btn" onclick="showTab('settings', this)"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 17h16M9 4v6M16 14v6"/></svg><span>Ayarlar</span></button>
         </nav>
 
         <!-- Öğrenci Yönetimi Sekmesi -->
@@ -230,7 +230,7 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=4"></script>
 </body>
 </html>
 

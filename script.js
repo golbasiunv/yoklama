@@ -1513,7 +1513,7 @@ function saveTheme(theme) {
 }
 
 function updateThemeColor(isDark) {
-    document.querySelector('meta[name="theme-color"]').content = isDark ? '#1d2422' : '#f6f5f1';
+    document.querySelector('meta[name="theme-color"]').content = isDark ? '#111a2a' : '#f3f6fa';
 }
 
 function setupThemeToggle() {
