@@ -1,12 +1,12 @@
-const CACHE_NAME = 'golbasi-yoklama-v4';
+const CACHE_NAME = 'golbasi-yoklama-v5';
 const APP_SHELL = [
     './',
     './index.html',
-    './styles.css?v=4',
-    './script.js?v=4',
-    './manifest.json?v=4',
-    './icons/icon-192x192.png?v=4',
-    './icons/icon-512x512.png?v=4'
+    './styles.css?v=5',
+    './script.js?v=5',
+    './manifest.json?v=5',
+    './icons/icon-192x192.png?v=5',
+    './icons/icon-512x512.png?v=5'
 ];
 
 self.addEventListener('install', event => {

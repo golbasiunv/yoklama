@@ -7,11 +7,11 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="theme-color" content="#f3f6fa">
-    <link rel="manifest" href="manifest.json?v=4">
-    <link rel="icon" href="icons/app-icon.svg?v=4" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="icons/icon-192x192.png?v=4">
+    <link rel="manifest" href="manifest.json?v=5">
+    <link rel="icon" href="icons/app-icon.svg?v=5" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png?v=5">
     <title>Gölbaşı Yoklama</title>
-    <link rel="stylesheet" href="styles.css?v=4">
+    <link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
     <div class="container">
@@ -138,9 +138,9 @@
 
             <div class="card">
                 <h2>Veri Yönetimi</h2>
-                <button onclick="checkPasswordAndExecute('export')" class="btn btn-secondary">📤 Verileri Dışa Aktar</button>
-                <button onclick="checkPasswordAndExecute('import')" class="btn btn-primary">📥 Verileri İçe Aktar</button>
-                <button onclick="checkPasswordAndExecute('delete')" class="btn btn-danger">🗑️ Tüm Verileri Sil</button>
+                <button onclick="checkPasswordAndExecute('export')" class="btn btn-secondary">Verileri Dışa Aktar</button>
+                <button onclick="checkPasswordAndExecute('import')" class="btn btn-primary">Verileri İçe Aktar</button>
+                <button onclick="checkPasswordAndExecute('delete')" class="btn btn-danger">Tüm Verileri Sil</button>
                 <input type="file" id="import-file" accept=".json" style="display: none;" onchange="importData(event)">
             </div>
         </div>
@@ -152,23 +152,25 @@
                 <h2>Yoklama Sonuçları</h2>
                 <div id="result-date" class="result-date"></div>
                 
-                <div class="result-section">
-                    <h3>📊 Özet</h3>
+                <div class="result-section result-section--summary">
+                    <h3>Özet</h3>
                     <div id="summary" class="summary"></div>
                 </div>
 
-                <div class="result-section">
-                    <h3>❌ Gelmeyenler</h3>
+                <div class="result-section result-section--absent">
+                    <h3>Gelmeyenler</h3>
                     <div id="absent-list" class="result-list"></div>
                 </div>
 
-                <div class="result-section">
-                    <h3>🏥 İzinliler</h3>
+                <div class="result-section result-section--excused">
+                    <h3>İzinliler</h3>
                     <div id="excused-list" class="result-list"></div>
                 </div>
 
-                <div class="modal-actions">
+                <p class="result-hint">WhatsApp'a Gönder veya Kaydet ile yoklama geçmişe eklenir. Kapat kaydetmez.</p>
+                <div class="modal-actions result-actions">
                     <button onclick="sendToWhatsApp()" class="btn btn-whatsapp">WhatsApp'a Gönder</button>
+                    <button onclick="saveAttendance()" class="btn btn-save" id="save-attendance-btn">Kaydet</button>
                     <button onclick="closeModal()" class="btn btn-secondary">Kapat</button>
                 </div>
             </div>
@@ -178,19 +180,19 @@
     <!-- İçe Aktarma Onay Modal -->
     <div id="import-confirm-modal" class="modal">
         <div class="modal-content confirm-modal">
-            <h2>📥 Veri İçe Aktarma</h2>
+            <h2>Veri İçe Aktarma</h2>
             <p class="confirm-text">Verileri nasıl içe aktarmak istersiniz?</p>
             
             <div class="import-choices">
                 <div class="import-choice">
-                    <strong>🔄 Birleştir (Önerilen)</strong>
+                    <strong>Birleştir (Önerilen)</strong>
                     <p>
                         Mevcut verileriniz korunur ve yeni veriler eklenir. Aynı öğrenciler ve yoklamalar birleştirilir.
                     </p>
                 </div>
                 
                 <div class="import-choice">
-                    <strong>⚠️ Üzerine Yaz</strong>
+                    <strong>Üzerine Yaz</strong>
                     <p>
                         Mevcut tüm verileriniz silinir ve dosyadaki veriler yüklenir. Bu işlem geri alınamaz!
                     </p>
@@ -199,8 +201,8 @@
             
             <div class="modal-actions">
                 <button onclick="closeImportConfirmModal()" class="btn btn-secondary">İptal</button>
-                <button onclick="confirmImport('merge')" class="btn btn-success">🔄 Birleştir</button>
-                <button onclick="confirmImport('overwrite')" class="btn btn-danger">⚠️ Üzerine Yaz</button>
+                <button onclick="confirmImport('merge')" class="btn btn-success">Birleştir</button>
+                <button onclick="confirmImport('overwrite')" class="btn btn-danger">Üzerine Yaz</button>
             </div>
         </div>
     </div>
@@ -208,7 +210,7 @@
     <!-- Tüm Verileri Sil Onay Modal -->
     <div id="delete-confirm-modal" class="modal">
         <div class="modal-content confirm-modal danger-modal">
-            <h2>🗑️ Tüm Verileri Sil</h2>
+            <h2>Tüm Verileri Sil</h2>
             <p class="confirm-text"><strong>TÜM VERİLER KALİCİ OLARAK SİLİNECEK!</strong></p>
             <p class="confirm-subtext">Bu işlem geri alınamaz. Emin misiniz?</p>
             <div class="modal-actions">
@@ -221,7 +223,7 @@
     <!-- Dışa Aktarma Başarılı Modal -->
     <div id="export-success-modal" class="modal">
         <div class="modal-content success-modal">
-            <h2>✅ Başarılı!</h2>
+            <h2>Başarılı!</h2>
             <p class="confirm-text">Verileriniz başarıyla dışa aktarıldı.</p>
             <p class="confirm-subtext" id="export-filename"></p>
             <div class="modal-actions">
@@ -230,7 +232,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=4"></script>
+    <script src="script.js?v=5"></script>
 </body>
 </html>
 

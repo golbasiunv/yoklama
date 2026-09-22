@@ -343,11 +343,13 @@ function restoreAttendanceSelections() {
         
         buttons.forEach(btn => {
             btn.classList.remove('selected-present', 'selected-absent', 'selected-excused');
+            btn.setAttribute('aria-pressed', 'false');
         });
         
         const selectedButton = document.querySelector(`[data-id="${studentId}"][data-status="${status}"]`);
         if (selectedButton) {
             selectedButton.classList.add(`selected-${status}`);
+            selectedButton.setAttribute('aria-pressed', 'true');
         }
     });
 }
@@ -504,6 +506,9 @@ function showResults(attendance, vakit) {
     window.currentAttendance = attendance;
     window.currentVakit = vakit;
     window.alreadySaved = false; // Henüz kaydedilmedi
+    const saveButton = document.getElementById('save-attendance-btn');
+    saveButton.disabled = false;
+    saveButton.textContent = 'Kaydet';
 }
 
 // Modal kapatma
@@ -512,23 +517,37 @@ function closeModal() {
     modal.classList.remove('active');
 }
 
-// WhatsApp'a gönderme
-function sendToWhatsApp() {
+function persistCurrentAttendance() {
     if (!window.currentAttendance) {
         alert('Yoklama verisi bulunamadı!');
+        return false;
+    }
+    if (!window.alreadySaved) {
+        saveAttendanceHistory(window.currentAttendance, window.currentVakit || 'sabah');
+        window.alreadySaved = true;
+        clearAttendanceSelections();
+        const saveButton = document.getElementById('save-attendance-btn');
+        saveButton.disabled = true;
+        saveButton.textContent = 'Kaydedildi';
+    }
+    return true;
+}
+
+function saveAttendance() {
+    persistCurrentAttendance();
+}
+
+// WhatsApp'a gönderme
+function sendToWhatsApp() {
+    if (!persistCurrentAttendance()) return;
+
+    if (!navigator.onLine) {
+        alert('Yoklama kaydedildi. WhatsApp üzerinden göndermek için internet bağlantısı gerekiyor; daha sonra Geçmiş bölümünden gönderebilirsin.');
         return;
     }
 
     const attendance = window.currentAttendance;
     const vakit = window.currentVakit || 'sabah';
-    
-    // Geçmişe kaydet (sadece WhatsApp'a gönderirken)
-    if (!window.alreadySaved) {
-        saveAttendanceHistory(attendance, vakit);
-        window.alreadySaved = true;
-        // WhatsApp'a gönderdikten sonra seçimleri sıfırla
-        clearAttendanceSelections();
-    }
     
     const now = new Date();
     const dateStr = formatDate(now);
@@ -1282,12 +1301,12 @@ function loadStatistics() {
         const percentageClass = stat.percentage >= 80 ? 'good' : stat.percentage >= 60 ? 'medium' : 'bad';
         tableHTML += `
             <tr>
-                <td class="student-name-cell">${stat.name}</td>
-                <td>${stat.total}</td>
-                <td class="present-cell">${stat.present}</td>
-                <td class="absent-cell">${stat.absent}</td>
-                <td class="excused-cell">${stat.excused}</td>
-                <td class="percentage-cell ${percentageClass}">%${stat.percentage}</td>
+                <td class="student-name-cell" data-label="Öğrenci">${stat.name}</td>
+                <td data-label="Toplam">${stat.total}</td>
+                <td class="present-cell" data-label="Var">${stat.present}</td>
+                <td class="absent-cell" data-label="Yok">${stat.absent}</td>
+                <td class="excused-cell" data-label="İzinli">${stat.excused}</td>
+                <td class="percentage-cell ${percentageClass}" data-label="Devam oranı">%${stat.percentage}</td>
             </tr>
         `;
     });
